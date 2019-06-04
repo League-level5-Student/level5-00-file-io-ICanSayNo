@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
+import javax.swing.SwingUtilities;
 
 public class IntroToFileIO {
 	public static void main(String[] args) {
@@ -60,13 +61,20 @@ public class IntroToFileIO {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		//Using a file chooser
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				//Using a file chooser
 		JFileChooser jfc = new JFileChooser();
 		int returnVal = jfc.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			String fileName = jfc.getSelectedFile().getAbsolutePath();
 			System.out.println(fileName);
-		}
+			}
+		};
+		
+		});
 	}
 }
