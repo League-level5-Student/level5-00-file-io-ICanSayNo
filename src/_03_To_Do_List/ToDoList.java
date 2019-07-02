@@ -39,6 +39,7 @@ public class ToDoList extends JFrame implements ActionListener {
 	 * into the list.
 	 */
 
+	String filename;
 	JButton button1;
 	JButton button2;
 	JButton button3;
@@ -46,11 +47,19 @@ public class ToDoList extends JFrame implements ActionListener {
 	JButton button5;
 	JPanel panel;
 
-	public ToDoList() {
+	public ToDoList() throws FileNotFoundException {
+		BufferedReader br = new BufferedReader(new FileReader("src/_03_To_Do_List/To_Do_List_File_To_Do.txt"));
+		try {
+			filename = br.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(filename);
 		button1 = new JButton("Add task");
 		button2 = new JButton("View Tasks");
 		button3 = new JButton("Remove Task");
-		button4 = new JButton("save List");
+		button4 = new JButton("copY LiSt");
 		button5 = new JButton("Load List");
 		panel = new JPanel();
 
@@ -72,7 +81,7 @@ public class ToDoList extends JFrame implements ActionListener {
 		button5.addActionListener(this);
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 
 		ToDoList list = new ToDoList();
 
@@ -84,7 +93,7 @@ public class ToDoList extends JFrame implements ActionListener {
 			System.out.println(newTask);
 			FileWriter fw;
 			try {
-				fw = new FileWriter("src/_03_To_Do_List/To_Do_List.txt", true);
+				fw = new FileWriter("src/_03_To_Do_List/" + filename + ".txt", true);
 				if (newTask != null) {
 					fw.write(newTask);
 
@@ -100,7 +109,7 @@ public class ToDoList extends JFrame implements ActionListener {
 			String fileTextTotal = "";
 			BufferedReader br;
 			try {
-				br = new BufferedReader(new FileReader("src/_03_To_Do_List/To_Do_List.txt"));
+				br = new BufferedReader(new FileReader("src/_03_To_Do_List/" + filename + ".txt"));
 
 				String fileText = br.readLine();
 				while (fileText != null) {
@@ -124,8 +133,8 @@ public class ToDoList extends JFrame implements ActionListener {
 			try {
 				
 				FileWriter fw = new FileWriter("src/_03_To_Do_List/test.txt", true);
-				BufferedReader br = new BufferedReader(new FileReader("src/_03_To_Do_List/To_Do_List.txt"));
-				Path path = Paths.get("src/_03_To_Do_List/To_Do_List.txt");
+				BufferedReader br = new BufferedReader(new FileReader("src/_03_To_Do_List/" + filename + ".txt"));
+				Path path = Paths.get("src/_03_To_Do_List/" + filename + ".txt");
 				
 				lineCount = Files.lines(path).count();
 
@@ -144,7 +153,7 @@ public class ToDoList extends JFrame implements ActionListener {
 					}
 				}
 				
-				File file = new File("src/_03_To_Do_List/To_Do_List.txt");
+				File file = new File("src/_03_To_Do_List/" + filename + ".txt");
 				file.delete();
 				File file2 = new File("src/_03_To_Do_List/test.txt");
 				file2.renameTo(file);
@@ -159,16 +168,46 @@ public class ToDoList extends JFrame implements ActionListener {
 			}
 
 		} else if (e.getSource().equals(button4)) {
-			File file = new File("src/_03_To_Do_List/To_Do_List.txt");
+			File fileNew = new File("src/_03_To_Do_List/To_Do_List_File_To_Do.txt");
+			fileNew.delete();
 			try {
-				file.createNewFile();
+				FileWriter fwriter = new FileWriter("src/_03_To_Do_List/To_Do_List_File_To_Do.txt", true);
+				BufferedReader br = new BufferedReader(new FileReader("src/_03_To_Do_List/" + filename + ".txt"));
+				String filenameTemp = JOptionPane.showInputDialog("What would you like to name the new file?");
+				fwriter.write(filenameTemp);
+				fwriter.close();
+				FileWriter fw = new FileWriter("src/_03_To_Do_List/" + filenameTemp + ".txt");
+				Path path = Paths.get("src/_03_To_Do_List/" + filename + ".txt");
+				long lineCount = Files.lines(path).count();
+				for (int i = 0; i < lineCount; i++) {
+					String line = br.readLine();
+					System.out.println(line);
+					System.out.println(i);
+					fw.write(line + "\n");
+				}
+				fw.close();
+				br.close();
+				filename = filenameTemp;
+				JOptionPane.showMessageDialog(null, "Saved!");
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			JOptionPane.showMessageDialog(null, "Saved!");
 		} else if (e.getSource().equals(button5)) {
-			JOptionPane.showInputDialog("Input a task to be completed");
+			filename = JOptionPane.showInputDialog("Which file would you like to load?");
+			JOptionPane.showMessageDialog(null, "Loaded: " + "src/_03_To_Do_List/" + filename + ".txt");
+			FileWriter fwriter;
+			File fileNew = new File("src/_03_To_Do_List/To_Do_List_File_To_Do.txt");
+			fileNew.delete();
+			try {
+				fwriter = new FileWriter("src/_03_To_Do_List/To_Do_List_File_To_Do.txt", true);
+				fwriter.write(filename);
+				fwriter.close();
+			} catch (IOException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			
 		}
 	}
 }
